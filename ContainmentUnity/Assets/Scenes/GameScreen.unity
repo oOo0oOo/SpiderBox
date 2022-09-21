@@ -1679,7 +1679,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6148314924527448664}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.279, y: 0, z: 0.029}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1947,7 +1947,7 @@ MonoBehaviour:
   - {fileID: 6149179581741343011}
   - {fileID: 6149179581119667975}
   - {fileID: 6149179580053690187}
-  stepSize: 0.015
+  stepSize: 0.01
   smoothness: 5
   stepHeight: 0.005
   sphereCastRadius: 0.01
@@ -2524,8 +2524,12 @@ MonoBehaviour:
   smoothness: 5
   raysNb: 8
   raysEccentricity: 0.2
-  outerRaysOffset: 0.028
-  innerRaysOffset: 2
+  outerRaysOffset: 1.39
+  innerRaysOffset: 0.8
+  a: 0.08
+  b: 0.1
+  c: 2.7
+  d: 3.16
   targetPosition: {fileID: 100817558}
 --- !u!4 &6149719758473922488
 Transform:

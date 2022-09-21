@@ -141,7 +141,7 @@ public class SpiderProceduralAnimation : MonoBehaviour
         for (int i = 0; i < nbLegs; ++i)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(legTargets[i].position, 0.05f);
+            Gizmos.DrawWireSphere(legTargets[i].position, 0.001f);
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(transform.TransformPoint(defaultLegPositions[i]), stepSize);
         }

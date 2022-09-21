@@ -23,6 +23,11 @@ public class SpiderController : MonoBehaviour
     private Quaternion lastRot;
     private Vector3[] pn;
 
+    public float a=0.08f;
+    public float b= 0.1f;
+    public float c=0.2f;
+    public float d=-0.2f;
+
     private bool targetToggle = false;
 
     public Transform targetPosition;
@@ -95,7 +100,7 @@ public class SpiderController : MonoBehaviour
             RaycastHit hit;
             Vector3 largener = Vector3.ProjectOnPlane(dir, up);
             Ray ray = new Ray(point - (dir + largener) * halfRange + largener.normalized * offset1 / 100f, dir);
-            //Debug.DrawRay(ray.origin, ray.direction);
+            Debug.DrawRay(ray.origin, ray.direction);
             if (Physics.SphereCast(ray, 0.01f, out hit, 2f * halfRange))
             {
                 res[0] += hit.point;
@@ -104,7 +109,7 @@ public class SpiderController : MonoBehaviour
                 positionAmount += 1;
             }
             ray = new Ray(point - (dir + largener) * halfRange + largener.normalized * offset2 / 100f, dir);
-            //Debug.DrawRay(ray.origin, ray.direction, Color.green);
+            Debug.DrawRay(ray.origin, ray.direction, Color.green);
             if (Physics.SphereCast(ray, 0.01f, out hit, 2f * halfRange))
             {
                 res[0] += hit.point;
@@ -185,7 +190,7 @@ public class SpiderController : MonoBehaviour
         // if (valueX != 0 || valueY != 0)
         if (true)
         {
-            pn = GetClosestPoint(transform.position, transform.forward, transform.up, 0.08f, 0.1f, 40, -40, 8);
+            pn = GetClosestPoint(transform.position, transform.forward, transform.up, a, b, c, d, 8);
             // pn = GetClosestPointIco(transform.position, transform.up, 0.2f);
 
             upward = pn[1];
