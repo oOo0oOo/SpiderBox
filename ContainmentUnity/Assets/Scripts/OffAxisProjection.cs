@@ -12,6 +12,8 @@ public class OffAxisProjection : MonoBehaviour
 	private float left, right, bottom, top, near, far;
 	private float dleft, dright, dbottom, dtop;
 
+	public float border = 0.003f;
+
 	void Start(){
 		mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
 		mainCamera.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
@@ -21,16 +23,16 @@ public class OffAxisProjection : MonoBehaviour
 		dbottom = -0.035f;
 		dtop = 0.035f;
 
-		// if (Application.isEditor){
-		// } else {
-		// 	// Camera center left in landscape mode
-		// 	var widthInMeters = METERS_PER_INCH * Screen.width / Screen.dpi;	
-		// 	var heightInMeters = METERS_PER_INCH * Screen.height / Screen.dpi;
-		// 	dleft = 0f;
-		// 	dright = widthInMeters;
-		// 	dbottom = heightInMeters / 2;
-		// 	dtop = heightInMeters / 2;
-		// }
+		if (Application.isEditor){
+		} else {
+			// Camera center left in landscape mode
+			var widthInMeters = METERS_PER_INCH * Screen.width / Screen.dpi;	
+			var heightInMeters = METERS_PER_INCH * Screen.height / Screen.dpi;
+			dleft = 0f;
+			dright = widthInMeters;
+			dbottom = - heightInMeters / 2;
+			dtop = heightInMeters / 2;
+		}
 	}
 
 	void LateUpdate()
@@ -44,10 +46,10 @@ public class OffAxisProjection : MonoBehaviour
 		Vector3 close = device_plane.ClosestPointOnPlane (Vector3.zero);
 		near = close.magnitude;
 
-		left = deviceCamPos.x + dleft;
-		right = deviceCamPos.x + dright;
-		top = deviceCamPos.y + dtop;
-		bottom = deviceCamPos.y + dbottom;
+		left = deviceCamPos.x + dleft - border;
+		right = deviceCamPos.x + dright + border;
+		top = deviceCamPos.y + dtop + border;
+		bottom = deviceCamPos.y + dbottom - border;
 
 		far = 10f; // may need bigger for bigger scenes, max 10 metres for now
 
