@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum SpiderState { Idle, Walking, TurningLeft, TurningRight };
 
 public class SpiderController : MonoBehaviour
 {
@@ -23,14 +24,12 @@ public class SpiderController : MonoBehaviour
     private Quaternion lastRot;
     private Vector3[] pn;
 
-    public float a=0.08f;
-    public float b= 0.1f;
-    public float c=0.2f;
-    public float d=-0.2f;
-
     private bool targetToggle = false;
 
     public Transform targetPosition;
+
+    public SpiderState state = SpiderState.Walking;
+    private float stateChangeCountdown = 2.0f;
 
 
     Vector3[] GetIcoSphereCoords(int depth)
@@ -123,76 +122,60 @@ public class SpiderController : MonoBehaviour
         return res;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         velocity = new Vector3();
         forward = transform.forward;
         upward = transform.up;
         lastRot = transform.rotation;
-        // targetPosition = new Vector3(0.1f, 0.1f, 0.1f);
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        // Find the current up
-        // pn = GetClosestPoint(transform.position, transform.forward, transform.up, 0.01f, 0.1f, 30, -30, 4);
-        // upward = pn[1];
-
-        // var dirTarget = targetPosition.position - transform.position;
-
-        // // When target reached
-        // if (dirTarget.magnitude < 0.005f){
-        //     if (targetToggle){
-        //         targetPosition.position = new Vector3(-0.11f, -0.029f, -0.0919f);
-        //     } else {
-        //         targetPosition.position = new Vector3(-0.017f, -0.029f, -0.0105f);
-        //     }
-        //     targetToggle = !targetToggle;
-        //     dirTarget = targetPosition.position - transform.position;
-        // }
-
-        // // Move towards target position
-        // var rotTarget = Quaternion.LookRotation(dirTarget, upward);
-        // var deltaRot = _speedRot * Time.fixedDeltaTime;
-        // var deltaPos = _speed * Time.fixedDeltaTime;
-
-        // transform.position = Vector3.MoveTowards(transform.position, targetPosition.position, deltaPos);
-        // transform.rotation = Quaternion.RotateTowards(transform.rotation, rotTarget, deltaRot);
-
         velocity = (smoothness * velocity + (transform.position - lastPosition)) / (1f + smoothness);
         if (velocity.magnitude < 0.000025f)
             velocity = lastVelocity;
         lastPosition = transform.position;
         lastVelocity = velocity;
 
-        // Move towards target
-        // transform.position += Vector3.MoveTowards(transform.position, targetPosition, _speed * Time.fixedDeltaTime);
-        
-        // float multiplier = 2f;
-        // if (Input.GetKey(KeyCode.LeftShift))
-        //     multiplier = 2f;
+        float dt = Time.fixedDeltaTime;
 
-        // _speed = 1f;
+        // Update the state machine
+        stateChangeCountdown -= dt;
+        if (stateChangeCountdown <= 0){
+            if (state == SpiderState.Idle){
+                state = SpiderState.Walking;
+                stateChangeCountdown = UnityEngine.Random.Range(4f, 8f);
+            } else {
+                float r = UnityEngine.Random.Range(0f, 1f);
+                if (r < 0.2) {
+                    state = SpiderState.TurningRight;
+                    stateChangeCountdown = UnityEngine.Random.Range(1f, 2f);
+                } else if (r < 0.4) {
+                    state = SpiderState.TurningLeft;
+                    stateChangeCountdown = UnityEngine.Random.Range(1f, 2f);
+                } else if (r < 0.8) {
+                    state = SpiderState.Walking;
+                    stateChangeCountdown = UnityEngine.Random.Range(4f, 8f);
+                } else  {
+                    state = SpiderState.Idle;
+                    stateChangeCountdown = UnityEngine.Random.Range(1f, 4f);
+                }
+            }
+        }
 
-        // Always go forward
-        transform.position += transform.forward * _speedForward * Time.fixedDeltaTime;
+        if (state == SpiderState.Walking) {
+            transform.position += transform.forward * _speedForward * dt;
+        } else if (state == SpiderState.TurningRight){
+            transform.position += transform.forward * _speedForward * dt * 0.8f;
+            transform.position += Vector3.Cross(transform.up, transform.forward) * _speedHorizontal * dt;
+        } else if (state == SpiderState.TurningLeft){
+            transform.position += transform.forward * _speedForward * dt * 0.8f;
+            transform.position += Vector3.Cross(transform.up, transform.forward) * -1 * _speedHorizontal * dt;
+        }
 
-        // float valueY = Input.GetAxis("Vertical");
-        // if (valueY != 0)
-        //     Debug.Log("UUPP");
-        //     transform.position += transform.forward * valueY * _speedForward * multiplier * Time.fixedDeltaTime;
-        // float valueX = Input.GetAxis("Horizontal");
-        // if (valueX != 0)
-        //     transform.position += Vector3.Cross(transform.up, transform.forward) * valueX * _speedHorizontal * multiplier * Time.fixedDeltaTime;
-
-        // if (valueX != 0 || valueY != 0)
-        if (true)
-        {
-            pn = GetClosestPoint(transform.position, transform.forward, transform.up, a, b, c, d, 8);
-            // pn = GetClosestPointIco(transform.position, transform.up, 0.2f);
-
+        if (state != SpiderState.Idle){
+            pn = GetClosestPoint(transform.position, transform.forward, transform.up, 0.1f, 0.1f, 1.9f, -1.9f, 8);
             upward = pn[1];
 
             Vector3[] pos = GetClosestPoint(transform.position, transform.forward, transform.up, 0.04f, raysEccentricity, innerRaysOffset, outerRaysOffset, raysNb);

@@ -12,7 +12,7 @@ public class OffAxisProjection : MonoBehaviour
 	private float left, right, bottom, top, near, far;
 	private float dleft, dright, dbottom, dtop;
 
-	public float border = 0.003f;
+	public float border = 0.002f;
 
 	void Start(){
 		mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
@@ -51,12 +51,7 @@ public class OffAxisProjection : MonoBehaviour
 		top = deviceCamPos.y + dtop + border;
 		bottom = deviceCamPos.y + dbottom - border;
 
-		far = 10f; // may need bigger for bigger scenes, max 10 metres for now
-
-		Vector3 topLeft = new Vector3 (left, top, near);
-		Vector3 topRight = new Vector3 (right, top, near);
-		Vector3 bottomLeft = new Vector3 (left, bottom, near);
-		Vector3 bottomRight = new Vector3 (right, bottom, near);
+		far = 2f; // may need bigger for bigger scenes, max 10 metres for now
 
 		// move near to 0.01 (1 cm from eye)
 		float scale_factor = 0.01f / near;

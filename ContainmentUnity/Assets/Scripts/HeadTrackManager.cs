@@ -39,8 +39,5 @@ public class HeadTrackManager : MonoBehaviour {
 		// pos += (face.rightEye.transform.position + face.leftEye.transform.position) / 2;
 
 		mainCamera.transform.position = pos;
-		
-		// mainCamera.transform.position = new Vector3 (-pos.x, pos.y, pos.z); 
-		// mainCamera.transform.rotation = new Quaternion( -rot.x, rot.y, rot.z, -rot.w);
     }
 }
